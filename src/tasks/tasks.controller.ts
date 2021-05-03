@@ -3,15 +3,19 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
   Query,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { GetTasksFilterDTO } from './dto/get-tasks-filter.dto';
-import { UpdateTaskStatusDTO } from './dto/update-task-status.dto';
-import { Task } from './tasks.model';
+import { TaskStatusValidationPipe } from './pipes/task-status-validation.pipe';
+// import { UpdateTaskStatusDTO } from './dto/update-task-status.dto';
+import { Task, TaskStatus } from './tasks.model';
 import { TasksService } from './tasks.service';
 
 @Controller('tasks')
@@ -20,7 +24,7 @@ export class TasksController {
 
   // GET Request to /tasks. View all Tasks and also tasks filtered with query params
   @Get()
-  public getTasks(@Query() filterDTO: GetTasksFilterDTO): Task[] {
+  public getTasks(@Query(ValidationPipe) filterDTO: GetTasksFilterDTO): Task[] {
     if (Object.keys(filterDTO).length > 0) {
       return this.tasksService.getTasksWithFilters(filterDTO);
     }
@@ -35,6 +39,7 @@ export class TasksController {
 
   // POST Request to /tasks. Create a new Task
   @Post()
+  @UsePipes(ValidationPipe)
   public createTask(@Body() createTaskDTO: CreateTaskDTO): Task {
     return this.tasksService.createTask(createTaskDTO);
   }
@@ -48,8 +53,11 @@ export class TasksController {
   // PATCH request to /:id/:status. Update Status of a specific task by ID
   @Patch('/:id/:status')
   public updateTaskById(
-    @Param() updateTaskStatusDTO: UpdateTaskStatusDTO,
+    // @Param() updateTaskStatusDTO: UpdateTaskStatusDTO,
+    @Param('id') id: string,
+    @Param('status', TaskStatusValidationPipe) status: TaskStatus,
   ): Task {
-    return this.tasksService.updateTaskById(updateTaskStatusDTO);
+    // return this.tasksService.updateTaskById(updateTaskStatusDTO);
+    return this.tasksService.updateTaskById(id, status);
   }
 }

@@ -22,6 +22,8 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
+# NestJS CRUD basics
+
 ## Description
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
@@ -45,28 +47,22 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
+## Generate Schematics using Nest CLI
 
-```bash
-# unit tests
-$ npm run test
+1. **Module**: `nest g mo <filename>`
+2. **Controller**: `nest g co <filename>`
+3. **Service**: `nest g s <filename>`
+4. **Pipes**: `nest g pi <filename>`
 
-# e2e tests
-$ npm run test:e2e
+## Pipes in NestJS
 
-# test coverage
-$ npm run test:cov
-```
+1. **ValidationPipe**: Validates compatibility of an entire object against a class(Eg: with DTO's). If mapping of any property doesn't happen properly, validation fails
+2. **ParseIntPipe**- Validates whether arguments are of type **number**.
+3. **Custom pipes**
 
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
 ## License
 

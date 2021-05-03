@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Task, TaskStatus } from './tasks.model';
 import { v1 as uuid } from 'uuid';
 import { CreateTaskDTO } from './dto/create-task.dto';
@@ -9,10 +9,19 @@ import { GetTasksFilterDTO } from './dto/get-tasks-filter.dto';
 export class TasksService {
   private tasks: Task[] = [];
 
+  /**
+   * Fetches all Tasks
+   * @returns Task[]
+   */
   public getAllTasks(): Task[] {
     return this.tasks;
   }
 
+  /**
+   * Fetches all tasks which are filtered based on status or a search string
+   * @param filterDTO
+   * @returns Task[]
+   */
   public getTasksWithFilters(filterDTO: GetTasksFilterDTO): Task[] {
     const { search, status } = filterDTO;
     let tasks = this.getAllTasks();
@@ -27,10 +36,24 @@ export class TasksService {
     return tasks;
   }
 
+  /**
+   * Fetches a single Task by ID
+   * @param id
+   * @returns Task
+   */
   public getTaskById(id: string): Task {
-    return this.tasks.find((t) => t.id === id);
+    const task = this.tasks.find((t) => t.id === id);
+    if (!task) {
+      throw new NotFoundException(`No Task with ID: ${id} found`);
+    }
+    return task;
   }
 
+  /**
+   * Create a new Task
+   * @param createTaskDTO
+   * @returns Task
+   */
   public createTask(createTaskDTO: CreateTaskDTO): Task {
     const { title, description } = createTaskDTO;
     const newTask: Task = {
@@ -43,12 +66,23 @@ export class TasksService {
     return newTask;
   }
 
+  /**
+   * Delete a task by ID
+   * @param id
+   */
   public deleteTaskById(id: string): void {
-    this.tasks = this.tasks.filter((t) => t.id !== id);
+    const task = this.getTaskById(id);
+    this.tasks.splice(this.tasks.indexOf(task), 1);
   }
 
-  public updateTaskById(updateTaskStatusDTO: UpdateTaskStatusDTO): Task {
-    const { id, status } = updateTaskStatusDTO;
+  /**
+   * Updates status of a task by ID
+   * @param updateTaskStatusDTO
+   * @returns Task
+   */
+  // public updateTaskById(updateTaskStatusDTO: UpdateTaskStatusDTO): Task {
+  public updateTaskById(id: string, status: TaskStatus): Task {
+    // const { id, status } = updateTaskStatusDTO;
     const updatedTask = this.getTaskById(id);
     updatedTask.status = status;
     return updatedTask;
